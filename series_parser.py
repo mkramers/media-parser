@@ -5,19 +5,10 @@ from tvdb_api import TvdbApi
 from parser import InfoGetter, ApiSearcher, RenamePathBuilder, MediaParserBase, MediaParser
 
 
-class SeriesInfo:
-
-    def __init__(self, name, season, episode):
-        self.name = name
-        self.season = season
-        self.episode = episode
-
-
 class SeriesResult:
 
-    def __init__(self, name, year, season, episode, episode_title):
+    def __init__(self, name, season, episode, episode_title):
         self.name = name
-        self.year = year
         self.season = season
         self.episode = episode
         self.episode_title = episode_title
@@ -27,19 +18,25 @@ class SeriesInfoGetter(InfoGetter):
 
     def get_info(self, filepath):
         result = PTN.parse(filepath)
-        return SeriesInfo(result['title'], result['season'], result['episode'])
+
+        return result
 
 
 class SeriesApiSearcher(ApiSearcher):
 
     def get_api_result(self, info):
-
         api = TvdbApi()
+
         found_info = api.find_episode_info(info)
 
-        episode_title = found_info["episodeName"]
+        print(found_info)
 
-        return SeriesResult(info.name, 1989, info.season, info.episode, episode_title)
+        series_title = found_info["title"]
+        episode_title = found_info["episodeName"]
+        season = found_info["airedSeason"]
+        episode = found_info["airedEpisodeNumber"]
+
+        return SeriesResult(series_title, season, episode, episode_title)
 
 
 class SeriesRenamePathBuilder(RenamePathBuilder):

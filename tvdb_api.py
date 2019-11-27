@@ -4,7 +4,11 @@ import requests
 class TvdbApi:
 
     def find_episode_info(self, info):
+
+        print(info)
         root_url = "https://api.thetvdb.com"
+
+        series_title = info['title']
 
         login_url = f"{root_url}/login"
 
@@ -23,7 +27,7 @@ class TvdbApi:
         search_headers = content_type_headers.copy()
         search_headers.update(auth_headers)
 
-        search_params = {'name': info.name}
+        search_params = {'name': series_title}
 
         search_response = requests.get(url=search_url, headers=search_headers, params=search_params)
 
@@ -32,12 +36,15 @@ class TvdbApi:
         series_id = search_response_json["data"][0]["id"]
 
         episode_info_url = f"{root_url}/series/{series_id}/episodes/query"
-        episode_info_params = {'id': str(series_id), "airedSeason": str(info.season), "airedEpisode": str(info.episode)}
+        episode_info_params = {'id': str(series_id), "airedSeason": str(info['season']), "airedEpisode": str(info['episode'])}
 
         episode_info_response = requests.get(url=episode_info_url, headers=search_headers, params=episode_info_params)
 
         episode_info_response_json = episode_info_response.json()
 
         info = episode_info_response_json["data"][0]
+
+        title_info = {'title': series_title}
+        info.update(title_info)
 
         return info
