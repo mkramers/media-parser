@@ -1,11 +1,11 @@
 from os import path
 import PTN
-from tvdb_api import TvdbApi
+from tvdb_api import TvdbApiController
 
 from parser import InfoGetter, ApiSearcher, RenamePathBuilder, MediaParserBase, MediaParser
 
 
-class SeriesResult:
+class EpisodeResult:
 
     def __init__(self, name, season, episode, episode_title):
         self.name = name
@@ -23,20 +23,17 @@ class SeriesInfoGetter(InfoGetter):
 
 
 class SeriesApiSearcher(ApiSearcher):
+    api = TvdbApiController()
 
     def get_api_result(self, info):
-        api = TvdbApi()
-
-        found_info = api.find_episode_info(info)
-
-        print(found_info)
+        found_info = self.api.find_episode_info(info)
 
         series_title = found_info["title"]
         episode_title = found_info["episodeName"]
         season = found_info["airedSeason"]
         episode = found_info["airedEpisodeNumber"]
 
-        return SeriesResult(series_title, season, episode, episode_title)
+        return EpisodeResult(series_title, season, episode, episode_title)
 
 
 class SeriesRenamePathBuilder(RenamePathBuilder):

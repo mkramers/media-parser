@@ -3,16 +3,26 @@ import requests
 
 class TvdbApi:
 
-    def find_episode_info(self, info):
+    def __init__(self):
+        self.root_url = "https://api.thetvdb.com"
 
-        print(info)
-        root_url = "https://api.thetvdb.com"
-
-        series_title = info['title']
-
-        login_url = f"{root_url}/login"
-
+    @staticmethod
+    def get_default_headers():
         content_type_headers = {'content-type': 'application/json'}
+
+        return content_type_headers
+
+    def get_auth_headers(self, jwt_token):
+        auth_token = {'Authorization': "Bearer " + jwt_token}
+
+        auth_headers = self.get_default_headers()
+        auth_headers.update(auth_token)
+
+        return auth_headers
+
+    def get_auth_token(self):
+        content_type_headers = self.get_default_headers()
+        login_url = f"{self.root_url}/login"
         login_data = {"apikey": "C603D7C458E29083", "username": "mkramesss", "userkey": "1LG5KYQABX1H43GH"}
 
         login_response = requests.post(url=login_url, headers=content_type_headers, json=login_data)
@@ -20,31 +30,55 @@ class TvdbApi:
 
         jwt_token = login_response_json["token"]
 
-        auth_headers = {'Authorization': "Bearer " + jwt_token}
+        return jwt_token
 
-        search_url = f"{root_url}/search/series"
-
-        search_headers = content_type_headers.copy()
-        search_headers.update(auth_headers)
-
+    def get_series_result(self, jwt_token, info):
+        series_title = info['title']
+        auth_headers = self.get_auth_headers(jwt_token)
         search_params = {'name': series_title}
+        search_url = f"{self.root_url}/search/series"
 
-        search_response = requests.get(url=search_url, headers=search_headers, params=search_params)
+        search_response = requests.get(url=search_url, headers=auth_headers, params=search_params)
 
         search_response_json = search_response.json()
+        series_result = search_response_json["data"][0]
 
-        series_id = search_response_json["data"][0]["id"]
+        return series_result
 
-        episode_info_url = f"{root_url}/series/{series_id}/episodes/query"
-        episode_info_params = {'id': str(series_id), "airedSeason": str(info['season']), "airedEpisode": str(info['episode'])}
+    def get_episode_result(self, jwt_token, parse_result, series_result):
+        series_id = series_result["id"]
+        series_title = series_result['seriesName']
 
-        episode_info_response = requests.get(url=episode_info_url, headers=search_headers, params=episode_info_params)
+        auth_headers = self.get_auth_headers(jwt_token)
 
+        episode_info_params = {'id': str(series_id), "airedSeason": str(parse_result['season']),
+                               "airedEpisode": str(parse_result['episode'])}
+        episode_info_url = f"{self.root_url}/series/{series_id}/episodes/query"
+        episode_info_response = requests.get(url=episode_info_url, headers=auth_headers, params=episode_info_params)
         episode_info_response_json = episode_info_response.json()
 
-        info = episode_info_response_json["data"][0]
+        episode_result = episode_info_response_json["data"][0]
 
+        # embed series title for future use
         title_info = {'title': series_title}
-        info.update(title_info)
+        episode_result.update(title_info)
 
-        return info
+        return episode_result
+
+    def find_episode_info(self, parse_result, jwt_token):
+        series_result = self.get_series_result(jwt_token, parse_result)
+
+        episode_result = self.get_episode_result(jwt_token, parse_result, series_result, )
+
+        return episode_result
+
+
+class TvdbApiController:
+
+    def __init__(self):
+        self.api = TvdbApi()
+
+    def find_episode_info(self, parse_result):
+        jwt_token = self.api.get_auth_token()
+        episode_result = self.api.find_episode_info(parse_result, jwt_token)
+        return episode_result
