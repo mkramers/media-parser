@@ -8,7 +8,7 @@ class SeriesRenamePathBuilder(RenamePathBuilder):
     def prepend_episode(self, episode_number):
         return f"E{episode_number:02}"
 
-    def build_rename_path(self, result):
+    def build_rename_path(self, result, extension):
         directory = path.join(result.name, f"Season {result.season:02}")
 
         if hasattr(result.episode, "__len__"):
@@ -17,5 +17,5 @@ class SeriesRenamePathBuilder(RenamePathBuilder):
         else:
             episode_string = self.prepend_episode(result.episode)
 
-        filename = f"{result.name} - S{result.season:02}{episode_string} - {result.episode_title}.mkv"
+        filename = f"{result.name} - S{result.season:02}{episode_string} - {result.episode_title}{extension}"
         return path.join(directory, filename)

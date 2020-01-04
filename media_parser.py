@@ -1,3 +1,5 @@
+import os
+
 from media_parser_base import MediaParserBase
 
 
@@ -13,7 +15,8 @@ class MediaParser(MediaParserBase):
 
         result = self.api_searcher.get_api_result(info)
 
-        rename_path = self.rename_path_builder.build_rename_path(result)
+        filename, extension = os.path.splitext(filename)
+        rename_path = self.rename_path_builder.build_rename_path(result, extension)
 
         return rename_path
 

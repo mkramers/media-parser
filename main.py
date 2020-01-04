@@ -15,8 +15,9 @@ def main():
     for root, dirs, files in os.walk(rootDir):
         for file in files:
             print(os.path.join(root, file))
-            result2 = parser.get_rename_path(file)
-            print(result2)
+            result = parser.get_rename_path(file)
+            print(result)
+            print('...')
 
 
 main()
