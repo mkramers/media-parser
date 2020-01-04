@@ -13,7 +13,7 @@ def testMe():
 def main():
     rootDir = 'C:\seed\public'
     deleteDir = 'C:\seed\_delete_me'
-    ignored_extensions = [".rar", ".nfo"];
+    ignored_extensions = "^.\\\\Sample.*|(^.*\.(nfo|NFO|sfv|SFV|rar|RAR|r[0-9]{2}|R[0-9]{2})$)"
 
     parser = SeriesMediaParser()
     cleaner = MediaFileCleaner(ignored_extensions, deleteDir)

@@ -1,4 +1,5 @@
 import os
+import re
 from os import path
 
 from file_cleaner_base import FileCleanerBase
@@ -13,18 +14,19 @@ class MediaFileCleaner(FileCleanerBase):
     def try_clean_file(self, filename):
         filename, extension = os.path.splitext(filename)
 
-        cleaned = False
-        if extension in self.ignored_extensions:
-            self.clean_file(filename)
-            cleaned = True
+        should_clean = False
 
-        return cleaned
+        if re.search(self.ignored_extensions, filename):
+            should_clean = True
 
-    def clean_file(self, filename):
-        destinsationFilename = path.join(self.delete_dir, filename);
-        self.move_to_delete_dir(destinsationFilename, filename)
+        if should_clean:
+            dest = path.join(self.delete_dir, filename);
+            self.clean_file(filename, dest)
 
-    def move_to_delete_dir(self, destinsationFilename, filename):
-        print("cleaning: " + destinsationFilename)
-        # os.rename(filename, destinsationFilename)
+        return should_clean
+
+    def clean_file(self, filename, dest):
+        print("cleaning: " + dest)
+        # os.rename(filename, dest)
+
 
