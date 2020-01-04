@@ -12,7 +12,7 @@ class MediaFileCleaner(FileCleanerBase):
         self.delete_dir = delete_dir
 
     def try_clean_file(self, filename):
-        filename, extension = os.path.splitext(filename)
+        _, extension = os.path.splitext(filename)
 
         should_clean = False
 
@@ -26,7 +26,8 @@ class MediaFileCleaner(FileCleanerBase):
         return should_clean
 
     def clean_file(self, filename, dest):
-        print("cleaning: " + dest)
+        # print("cleaning: " + dest)
+        print("skip")
         # os.rename(filename, dest)
 
 
