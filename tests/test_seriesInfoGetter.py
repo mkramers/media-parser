@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from series_parser import SeriesInfoGetter, SeriesInfo
+from series_info_getter import SeriesInfoGetter
 
 
 class TestSeriesInfoGetter(TestCase):

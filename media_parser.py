@@ -1,36 +1,4 @@
-from abc import ABC, abstractmethod
-
-
-def determine_media_type(filepath):
-    return 0
-
-
-class InfoGetter(ABC):
-
-    @abstractmethod
-    def get_info(self, filepath):
-        pass
-
-
-class ApiSearcher(ABC):
-
-    @abstractmethod
-    def get_api_result(self, info):
-        pass
-
-
-class RenamePathBuilder(ABC):
-
-    @abstractmethod
-    def build_rename_path(self, result):
-        pass
-
-
-class MediaParserBase(ABC):
-
-    @abstractmethod
-    def get_rename_path(self, filename):
-        pass
+from media_parser_base import MediaParserBase
 
 
 class MediaParser(MediaParserBase):

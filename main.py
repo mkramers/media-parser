@@ -1,4 +1,4 @@
-from series_parser import SeriesMediaParser
+from series_media_parser import SeriesMediaParser
 
 
 def main():
